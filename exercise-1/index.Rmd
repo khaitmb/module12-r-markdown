@@ -1,0 +1,40 @@
+---
+title: "Encanto Review"
+author: "Khaitlin Bernaldez"
+date: "4/13/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library("httr")
+library("jsonlite")
+source("apikey.R")
+
+movie <- "Encanto"
+
+movie.info <- function(movie) {
+    base.uri <- "https://api.nytimes.com/svc/movies/v2/"
+    resource <- "reviews/search.json"
+    query.params <- list('query' = movie, 'api-key' = my.apikey)
+    
+    response <- GET(paste0(base.uri, resource), query = query.params)
+    body <- content(response, "text")
+    repos <- fromJSON(body)
+    
+    reviews <- flatten(repos$results)
+    
+    headline <- reviews$headline
+    summary <- reviews$summary_short
+    article <- reviews$link.url
+    
+    return(list(headline, summary, article))
+}
+```
+
+## `r movie.info(movie)[1]`
+
+Below is the summary about Encanto from the New York Times API:
+
+> `r movie.info(movie)[2]`
+
+Follow [this link](`r movie.info(movie)[3]`) to read the full review.
